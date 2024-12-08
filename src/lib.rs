@@ -34,6 +34,16 @@ impl Str {
             Self { data, size }
         }
     }
+
+    #[inline]
+    pub fn len(&self) -> usize {
+        self.size
+    }
+
+    #[inline]
+    pub fn is_empty(&self) -> bool {
+        self.size == 0
+    }
 }
 
 impl Drop for Str {
@@ -103,6 +113,18 @@ impl Hash for Str {
     }
 }
 
+impl<'a> From<&'a str> for Str {
+    fn from(s: &'a str) -> Self {
+        Self::new(s)
+    }
+}
+
+impl std::fmt::Display for Str {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str(self.as_ref())
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -136,6 +158,8 @@ mod tests {
         let s = Str::new("hello world");
         assert_eq!(s.as_ref(), "hello world");
         assert_eq!(s.size, 11);
+        assert_eq!(s.len(), 11);
+        assert!(!s.is_empty());
     }
 
     #[test]
@@ -143,6 +167,8 @@ mod tests {
         let s = Str::new("");
         assert_eq!(s.as_ref(), "");
         assert_eq!(s.size, 0);
+        assert_eq!(s.len(), 0);
+        assert!(s.is_empty());
     }
 
     #[test]
@@ -214,6 +240,12 @@ mod tests {
         assert_ne!(s1.data, s2.data);
         assert_ne!(s2.data, s3.data);
         assert_ne!(s3.data, s4.data);
+    }
+
+    #[test]
+    fn test_from_str() {
+        let s1: Str = "xxx".into();
+        assert_eq!(s1.as_ref(), "xxx");
     }
 
     #[test]
