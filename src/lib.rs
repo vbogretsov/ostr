@@ -1,6 +1,21 @@
 use std::borrow::Borrow;
 use std::hash::Hash;
 
+/// A compact, owned string type that's optimized for size and performance.
+/// 
+/// # Safety
+/// This type uses raw pointers and manual memory management internally.
+/// The following invariants must be maintained:
+/// - `data` must be properly aligned and valid for `size` bytes when non-null
+/// - The memory must contain valid UTF-8 data
+/// 
+/// # Examples
+/// ```
+/// use your_crate::Str;
+/// 
+/// let s = Str::new("hello");
+/// assert_eq!(s.as_ref(), "hello");
+/// ```
 #[derive(Debug)]
 pub struct Str {
     data: *const u8,
