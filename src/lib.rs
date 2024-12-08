@@ -21,6 +21,13 @@ impl Str {
     #[inline]
     pub fn new(s: &str) -> Self {
         let size = s.len();
+        if size == 0 {
+            return Self {
+                data: std::ptr::null(),
+                size,
+            };
+        }
+
         unsafe {
             let data = std::alloc::alloc(Str::layout(size));
             std::ptr::copy(s.as_ptr(), data, size);
@@ -32,6 +39,10 @@ impl Str {
 impl Drop for Str {
     #[inline]
     fn drop(&mut self) {
+        if self.size == 0 {
+            return;
+        }
+
         unsafe {
             let data = self.data as *mut u8;
             std::alloc::dealloc(data, Str::layout(self.size));
@@ -42,6 +53,10 @@ impl Drop for Str {
 impl Clone for Str {
     #[inline]
     fn clone(&self) -> Self {
+        if self.size == 0 {
+            return Self::new("")
+        }
+
         unsafe {
             let size = self.size;
             let data = std::alloc::alloc(Str::layout(size));
@@ -52,6 +67,7 @@ impl Clone for Str {
 }
 
 impl AsRef<str> for Str {
+    #[inline]
     fn as_ref(&self) -> &str {
         self.borrow()
     }
@@ -59,6 +75,10 @@ impl AsRef<str> for Str {
 
 impl Borrow<str> for Str {
     fn borrow(&self) -> &str {
+        if self.size == 0 {
+            return ""
+        }
+
         unsafe {
             std::str::from_utf8_unchecked(std::slice::from_raw_parts(
                 self.data, self.size,
