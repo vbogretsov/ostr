@@ -2,17 +2,17 @@ use std::borrow::Borrow;
 use std::hash::Hash;
 
 /// A compact, owned string type that's optimized for size and performance.
-/// 
+///
 /// # Safety
 /// This type uses raw pointers and manual memory management internally.
 /// The following invariants must be maintained:
 /// - `data` must be properly aligned and valid for `size` bytes when non-null
 /// - The memory must contain valid UTF-8 data
-/// 
+///
 /// # Examples
 /// ```
-/// use your_crate::Str;
-/// 
+/// use ostr::Str;
+///
 /// let s = Str::new("hello");
 /// assert_eq!(s.as_ref(), "hello");
 /// ```
@@ -79,7 +79,7 @@ impl Clone for Str {
     #[inline]
     fn clone(&self) -> Self {
         if self.size == 0 {
-            return Self::new("")
+            return Self::new("");
         }
 
         unsafe {
@@ -101,7 +101,7 @@ impl AsRef<str> for Str {
 impl Borrow<str> for Str {
     fn borrow(&self) -> &str {
         if self.size == 0 {
-            return ""
+            return "";
         }
 
         unsafe {
