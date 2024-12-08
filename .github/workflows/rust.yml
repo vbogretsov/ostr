@@ -1,0 +1,67 @@
+name: Rust CI/CD
+
+on:
+  push:
+    branches: [ main ]
+    tags:
+      - 'v*'
+  pull_request:
+    branches: [ main ]
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  check:
+    name: Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+      
+      # Cache dependencies
+      - uses: Swatinem/rust-cache@v2
+
+      # Check formatting
+      - name: Check formatting
+        run: cargo fmt --all -- --check
+
+      # Run clippy
+      - name: Clippy check
+        run: cargo clippy -- -D warnings
+
+  test:
+    name: Test Suite
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      
+      # Run tests
+      - name: Run tests
+        run: cargo test --verbose
+
+      # Run tests with MIRI for deeper memory safety checks
+      - name: Install and run MIRI
+        run: |
+          rustup toolchain install nightly --component miri
+          cargo +nightly miri test
+
+  publish:
+    name: Publish to crates.io
+    needs: [check, test]
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v')
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+
+      # Publish to crates.io
+      - name: Publish
+        run: cargo publish --token ${CRATES_TOKEN}
+        env:
+          CRATES_TOKEN: ${{ secrets.CRATES_TOKEN }}

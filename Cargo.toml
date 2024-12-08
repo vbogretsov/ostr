@@ -1,0 +1,13 @@
+[package]
+name = "ostr"
+version = "0.1.0"
+edition = "2021"
+description = "Owned str"
+keywords = ["string", "allocation"]
+categories = ["data-structures"]
+license = "MIT"
+repository = "https://github.com/vbogretsov/ostr"
+documentation = "https://docs.rs/ostr"
+readme = "README.md"
+
+[dependencies]
