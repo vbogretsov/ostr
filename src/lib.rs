@@ -140,6 +140,9 @@ impl std::fmt::Display for Str {
     }
 }
 
+unsafe impl Send for Str {}
+unsafe impl Sync for Str {}
+
 #[cfg(test)]
 mod tests {
     use super::*;
