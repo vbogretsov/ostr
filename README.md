@@ -1,0 +1,2 @@
+# ostr
+Owned const str
