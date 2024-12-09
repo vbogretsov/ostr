@@ -11,17 +11,19 @@ use std::hash::Hash;
 ///
 /// # Examples
 /// ```
-/// # Use Create
-/// use ostr::Str;
+/// // Use Create
+/// # use ostr::Str;
+/// # use std::borrow::Borrow;
+/// # use std::collections::HashMap;
 ///
-/// # Define Complex Key Type with [`Str`]
+/// // Define Complex Key Type with [`Str`]
 /// #[derive(Debug, Clone, Hash, PartialEq, Eq)]
 /// struct SchemaKey {
 ///     subject: Str,
 ///     version: i32,
 /// }
 ///
-/// # Defien Complex Key Borrowed Type
+/// // Defien Complex Key Borrowed Type
 /// #[derive(Debug, Clone, Hash, PartialEq, Eq)]
 /// struct SchemaKeyRef<'a> {
 ///     subject: &'a str,
@@ -36,7 +38,7 @@ use std::hash::Hash;
 ///     }
 /// }
 ///
-/// # Use Borroed Key Type in [`HashMap`] or [`HashSet`] lookups
+/// // Use Borroed Key Type in [`HashMap`] or [`HashSet`] lookups
 /// let mut cache: HashMap<SchemaKey, String> = HashMap::new();
 /// cache.insert(
 ///     SchemaKey{subject: Str::new("User"), version: 1},
