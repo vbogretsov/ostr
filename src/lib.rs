@@ -27,7 +27,7 @@ use std::hash::Hash;
 ///     subject: &'a str,
 ///     version: i32,
 /// }
-
+///
 /// impl<'a> Borrow<SchemaKeyRef<'a>> for SchemaKey {
 ///     fn borrow(&self) -> &SchemaKeyRef<'a> {
 ///         unsafe {
