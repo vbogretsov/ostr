@@ -11,10 +11,46 @@ use std::hash::Hash;
 ///
 /// # Examples
 /// ```
-/// use ostr::Str;
+/// // Use Create
+/// # use ostr::Str;
+/// # use std::borrow::Borrow;
+/// # use std::collections::HashMap;
 ///
-/// let s = Str::new("hello");
-/// assert_eq!(s.as_ref(), "hello");
+/// // Define Complex Key Type with [`Str`]
+/// #[derive(Debug, Clone, Hash, PartialEq, Eq)]
+/// struct SchemaKey {
+///     subject: Str,
+///     version: i32,
+/// }
+///
+/// // Defien Complex Key Borrowed Type
+/// #[derive(Debug, Clone, Hash, PartialEq, Eq)]
+/// struct SchemaKeyRef<'a> {
+///     subject: &'a str,
+///     version: i32,
+/// }
+///
+/// impl<'a> Borrow<SchemaKeyRef<'a>> for SchemaKey {
+///     fn borrow(&self) -> &SchemaKeyRef<'a> {
+///         unsafe {
+///             &*(self as *const SchemaKey as *const SchemaKeyRef)
+///         }
+///     }
+/// }
+///
+/// // Use Borroed Key Type in [`HashMap`] or [`HashSet`] lookups
+/// let mut cache: HashMap<SchemaKey, String> = HashMap::new();
+/// cache.insert(
+///     SchemaKey{subject: Str::new("User"), version: 1},
+///     "User:1".to_string(),
+/// );
+/// cache.insert(
+///     SchemaKey{subject: Str::new("User"), version: 2},
+///     "User:2".to_string(),
+/// );
+///
+/// let key = SchemaKeyRef{subject: "User", version: 1};
+/// assert_eq!(cache.get(&key), Some(&"User:1".to_string()));
 /// ```
 #[derive(Debug)]
 pub struct Str {
